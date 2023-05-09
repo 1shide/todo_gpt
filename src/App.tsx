@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import ToDoList from './ToDoList';
+import ToDoForm from './ToDoForm';
 
-function App() {
+interface Task {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+const App: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const toggleTask = (id: number) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task))
+    );
+  };
+
+  const addTask = (text: string) => {
+    setTasks(prevTasks => [
+      ...prevTasks,
+      {
+        id: prevTasks.length ? prevTasks[prevTasks.length - 1].id + 1 : 1,
+        text,
+        completed: false,
+      },
+    ]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>ToDo App</h1>
+      <ToDoList tasks={tasks} toggleTask={toggleTask} />
+      <ToDoForm addTask={addTask} />
     </div>
   );
-}
+};
 
 export default App;
