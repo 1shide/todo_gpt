@@ -9,12 +9,24 @@ interface Task {
 interface Props {
     tasks: Task[];
     toggleTask: (id: number) => void;
+    filter: 'all' | 'completed' | 'uncompleted'; // フィルターのプロパティを追加
 }
 
-const ToDoList: React.FC<Props> = ({ tasks, toggleTask }) => {
+const ToDoList: React.FC<Props> = ({ tasks, toggleTask, filter }) => {
+    const filteredTasks = tasks.filter(task => {
+        switch (filter) {
+            case 'completed':
+                return task.completed;
+            case 'uncompleted':
+                return !task.completed;
+            default:
+                return true;
+        }
+    });
+
     return (
         <ul>
-            {tasks.map(task => (
+            {filteredTasks.map(task => (
                 <li key={task.id}>
                     <input
                         type="checkbox"
