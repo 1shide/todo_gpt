@@ -17,13 +17,13 @@ const App: React.FC = () => {
     );
   };
 
-  const addTask = (text: string) => {
+  const addTask = (text: string, completed: boolean) => {
     setTasks(prevTasks => [
       ...prevTasks,
       {
         id: prevTasks.length ? prevTasks[prevTasks.length - 1].id + 1 : 1,
         text,
-        completed: false,
+        completed,
       },
     ]);
   };

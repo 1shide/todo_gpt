@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 interface Props {
-    addTask: (text: string) => void;
+    addTask: (text: string, completed: boolean) => void;
 }
 
 const ToDoForm: React.FC<Props> = ({ addTask }) => {
@@ -10,7 +10,7 @@ const ToDoForm: React.FC<Props> = ({ addTask }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!text.trim()) return;
-        addTask(text.trim());
+        addTask(text.trim(), false); // falseを追加
         setText('');
     };
 

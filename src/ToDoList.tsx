@@ -15,12 +15,15 @@ const ToDoList: React.FC<Props> = ({ tasks, toggleTask }) => {
     return (
         <ul>
             {tasks.map(task => (
-                <li
-                    key={task.id}
-                    style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-                    onClick={() => toggleTask(task.id)}
-                >
-                    {task.text}
+                <li key={task.id}>
+                    <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => toggleTask(task.id)}
+                    />
+                    <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+                        {task.text}
+                    </span>
                 </li>
             ))}
         </ul>
