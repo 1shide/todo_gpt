@@ -1,65 +1,102 @@
-import React, { useState } from 'react';
-import ToDoList from './ToDoList';
-import ToDoForm from './ToDoForm';
-import './App.css'
+import { useState } from 'react';
+import styles from './index.module.css';
 
-interface Task {
+interface Todo {
   id: number;
   text: string;
   completed: boolean;
 }
 
-const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [filter, setFilter] = useState<'all' | 'completed' | 'uncompleted'>('all'); // フィルターのステート変数
+function App() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [newTodo, setNewTodo] = useState('');
 
-  const toggleTask = (id: number) => {
-    setTasks(prevTasks =>
-      prevTasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task))
+  const handleAddTodo = () => {
+    if (newTodo.trim()) {
+      setTodos([
+        ...todos,
+        {
+          id: Date.now(),
+          text: newTodo.trim(),
+          completed: false,
+        },
+      ]);
+      setNewTodo('');
+    }
+  };
+
+  const handleDeleteTodo = (id: number) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const handleToggleTodo = (id: number) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
     );
   };
 
-  const addTask = (text: string, completed: boolean) => {
-    setTasks(prevTasks => [
-      ...prevTasks,
-      {
-        id: prevTasks.length ? prevTasks[prevTasks.length - 1].id + 1 : 1,
-        text,
-        completed,
-      },
-    ]);
+  const handleFilterCompleted = () => {
+    setTodos(todos.filter((todo) => todo.completed));
   };
 
-  const clearCompletedTasks = () => {
-    setTasks(prevTasks => prevTasks.filter(task => !task.completed));
+  const handleFilterIncomplete = () => {
+    setTodos(todos.filter((todo) => !todo.completed));
   };
-
-  // フィルターの状態に応じて、表示するタスクのリストを変更する
-  const filteredTasks = tasks.filter(task => {
-    switch (filter) {
-      case 'completed':
-        return task.completed;
-      case 'uncompleted':
-        return !task.completed;
-      default:
-        return true;
-    }
-  });
-
-
 
   return (
-    <div>
-      <h1>ToDo App</h1>
-      <ToDoForm addTask={addTask} />
-      <button onClick={() => setFilter('all')}>全て</button> // 全てのタスクを表示するフィルター
-      <button onClick={() => setFilter('completed')}>完了済み</button> // 完了済みのタスクのみを表示するフィルター
-      <button onClick={() => setFilter('uncompleted')}>未完了</button> // 未完了のタスクのみを表示するフィルター
-      <ToDoList tasks={filteredTasks} toggleTask={toggleTask} filter={filter} />
-      <button onClick={clearCompletedTasks}>完了済みタスクを削除</button>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Todo App</h1>
+      <div className={styles.filterButtons}>
+        <button className={styles.filterButton} onClick={handleFilterCompleted}>
+          <span className={`${styles.filterButton__icon} ${styles.completed}`}>
+            &#x2714;
+          </span>
+          Completed
+        </button>
+        <button className={styles.filterButton} onClick={handleFilterIncomplete}>
+          <span className={styles.filterButton__icon}>&#x2718;</span>
+          Incomplete
+        </button>
+      </div>
+      <div className={styles.todoList}>
+        {todos.map((todo) => (
+          <div key={todo.id} className={styles.todoItem}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              onChange={() => handleToggleTodo(todo.id)}
+            />
+            <span
+              className={`${styles.todoItem__text} ${todo.completed && styles.completed
+                }`}
+            >
+              {todo.text}
+            </span>
+            <button
+              className={styles.deleteButton}
+              onClick={() => handleDeleteTodo(todo.id)}
+            >
+              &#x2716;
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className={styles.addTodo}>
+        <input
+          className={styles.addTodo__input}
+          type="text"
+          placeholder="Add new todo"
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+        />
+        <button className={styles.addTodo__button} onClick={handleAddTodo}>
+          Add
+        </button>
+      </div>
     </div>
   );
-};
+}
 
 export default App;
-
